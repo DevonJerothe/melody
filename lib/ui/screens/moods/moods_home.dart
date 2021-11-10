@@ -64,46 +64,50 @@ class MoodsHome extends GetView<MoodsController> {
             );
           }
           return Scrollbar(
-            child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: controller.moods.value.length,
-                itemBuilder: (context, index) {
-                  return ContainerCard(
-                    padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
-                    margin: const EdgeInsets.fromLTRB(15, 0, 15, 5),
-                    height: SizeConfig.blockSizeVertical! * 15,
-                    width: SizeConfig.blockSizeHorizontal! * 100,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(controller.moods.value[index].title),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                controller.moods.value[index].description,
-                                maxLines: 4,
-                                softWrap: true,
+            child: MediaQuery.removePadding(
+              context: Get.context!,
+              removeTop: true,
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: controller.moods.value.length,
+                  itemBuilder: (context, index) {
+                    return ContainerCard(
+                      padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
+                      margin: const EdgeInsets.fromLTRB(15, 0, 15, 5),
+                      height: SizeConfig.blockSizeVertical! * 15,
+                      width: SizeConfig.blockSizeHorizontal! * 100,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(controller.moods.value[index].title),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  controller.moods.value[index].description,
+                                  maxLines: 4,
+                                  softWrap: true,
+                                ),
                               ),
-                            ),
-                            const Expanded(
-                              child: Text(
-                                'PlaceHolder',
-                                textAlign: TextAlign.end,
-                              ),
-                            )
-                          ],
-                        ),
-                        Text(controller.moods.value[index].dateCreated
-                            .toString())
-                      ],
-                    ),
-                  );
-                }),
+                              const Expanded(
+                                child: Text(
+                                  'PlaceHolder',
+                                  textAlign: TextAlign.end,
+                                ),
+                              )
+                            ],
+                          ),
+                          Text(controller.moods.value[index].dateCreated
+                              .toString())
+                        ],
+                      ),
+                    );
+                  }),
+            ),
           );
         }))
       ],
