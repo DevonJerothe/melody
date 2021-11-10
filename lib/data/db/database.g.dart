@@ -367,7 +367,7 @@ class Moods extends DataClass implements Insertable<Moods> {
   final int? habitId;
   final String title;
   final String description;
-  final String icon;
+  final String? icon;
   final String? positiveTags;
   final String? negativeTags;
   final double? duration;
@@ -379,7 +379,7 @@ class Moods extends DataClass implements Insertable<Moods> {
       this.habitId,
       required this.title,
       required this.description,
-      required this.icon,
+      this.icon,
       this.positiveTags,
       this.negativeTags,
       this.duration,
@@ -399,7 +399,7 @@ class Moods extends DataClass implements Insertable<Moods> {
       description: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}description'])!,
       icon: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}icon'])!,
+          .mapFromDatabaseResponse(data['${effectivePrefix}icon']),
       positiveTags: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}positive_tags']),
       negativeTags: const StringType()
@@ -422,7 +422,9 @@ class Moods extends DataClass implements Insertable<Moods> {
     }
     map['title'] = Variable<String>(title);
     map['description'] = Variable<String>(description);
-    map['icon'] = Variable<String>(icon);
+    if (!nullToAbsent || icon != null) {
+      map['icon'] = Variable<String?>(icon);
+    }
     if (!nullToAbsent || positiveTags != null) {
       map['positive_tags'] = Variable<String?>(positiveTags);
     }
@@ -450,7 +452,7 @@ class Moods extends DataClass implements Insertable<Moods> {
           : Value(habitId),
       title: Value(title),
       description: Value(description),
-      icon: Value(icon),
+      icon: icon == null && nullToAbsent ? const Value.absent() : Value(icon),
       positiveTags: positiveTags == null && nullToAbsent
           ? const Value.absent()
           : Value(positiveTags),
@@ -478,7 +480,7 @@ class Moods extends DataClass implements Insertable<Moods> {
       habitId: serializer.fromJson<int?>(json['habitId']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String>(json['description']),
-      icon: serializer.fromJson<String>(json['icon']),
+      icon: serializer.fromJson<String?>(json['icon']),
       positiveTags: serializer.fromJson<String?>(json['positiveTags']),
       negativeTags: serializer.fromJson<String?>(json['negativeTags']),
       duration: serializer.fromJson<double?>(json['duration']),
@@ -495,7 +497,7 @@ class Moods extends DataClass implements Insertable<Moods> {
       'habitId': serializer.toJson<int?>(habitId),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String>(description),
-      'icon': serializer.toJson<String>(icon),
+      'icon': serializer.toJson<String?>(icon),
       'positiveTags': serializer.toJson<String?>(positiveTags),
       'negativeTags': serializer.toJson<String?>(negativeTags),
       'duration': serializer.toJson<double?>(duration),
@@ -573,7 +575,7 @@ class MoodCompanion extends UpdateCompanion<Moods> {
   final Value<int?> habitId;
   final Value<String> title;
   final Value<String> description;
-  final Value<String> icon;
+  final Value<String?> icon;
   final Value<String?> positiveTags;
   final Value<String?> negativeTags;
   final Value<double?> duration;
@@ -598,7 +600,7 @@ class MoodCompanion extends UpdateCompanion<Moods> {
     this.habitId = const Value.absent(),
     required String title,
     required String description,
-    required String icon,
+    this.icon = const Value.absent(),
     this.positiveTags = const Value.absent(),
     this.negativeTags = const Value.absent(),
     this.duration = const Value.absent(),
@@ -606,15 +608,14 @@ class MoodCompanion extends UpdateCompanion<Moods> {
     this.dateChanged = const Value.absent(),
   })  : userId = Value(userId),
         title = Value(title),
-        description = Value(description),
-        icon = Value(icon);
+        description = Value(description);
   static Insertable<Moods> custom({
     Expression<int>? moodId,
     Expression<int>? userId,
     Expression<int?>? habitId,
     Expression<String>? title,
     Expression<String>? description,
-    Expression<String>? icon,
+    Expression<String?>? icon,
     Expression<String?>? positiveTags,
     Expression<String?>? negativeTags,
     Expression<double?>? duration,
@@ -642,7 +643,7 @@ class MoodCompanion extends UpdateCompanion<Moods> {
       Value<int?>? habitId,
       Value<String>? title,
       Value<String>? description,
-      Value<String>? icon,
+      Value<String?>? icon,
       Value<String?>? positiveTags,
       Value<String?>? negativeTags,
       Value<double?>? duration,
@@ -682,7 +683,7 @@ class MoodCompanion extends UpdateCompanion<Moods> {
       map['description'] = Variable<String>(description.value);
     }
     if (icon.present) {
-      map['icon'] = Variable<String>(icon.value);
+      map['icon'] = Variable<String?>(icon.value);
     }
     if (positiveTags.present) {
       map['positive_tags'] = Variable<String?>(positiveTags.value);
@@ -750,8 +751,8 @@ class $MoodTable extends Mood with TableInfo<$MoodTable, Moods> {
       typeName: 'TEXT', requiredDuringInsert: true);
   final VerificationMeta _iconMeta = const VerificationMeta('icon');
   late final GeneratedColumn<String?> icon = GeneratedColumn<String?>(
-      'icon', aliasedName, false,
-      typeName: 'TEXT', requiredDuringInsert: true);
+      'icon', aliasedName, true,
+      typeName: 'TEXT', requiredDuringInsert: false);
   final VerificationMeta _positiveTagsMeta =
       const VerificationMeta('positiveTags');
   late final GeneratedColumn<String?> positiveTags = GeneratedColumn<String?>(
@@ -830,8 +831,6 @@ class $MoodTable extends Mood with TableInfo<$MoodTable, Moods> {
     if (data.containsKey('icon')) {
       context.handle(
           _iconMeta, icon.isAcceptableOrUnknown(data['icon']!, _iconMeta));
-    } else if (isInserting) {
-      context.missing(_iconMeta);
     }
     if (data.containsKey('positive_tags')) {
       context.handle(
@@ -1320,6 +1319,7 @@ abstract class _$MelodyDB extends GeneratedDatabase {
   late final $MoodTable mood = $MoodTable(this);
   late final $HabitTable habit = $HabitTable(this);
   late final UserDao userDao = UserDao(this as MelodyDB);
+  late final MoodDao moodDao = MoodDao(this as MelodyDB);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override

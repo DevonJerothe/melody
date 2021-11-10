@@ -7,7 +7,7 @@ class Mood extends Table {
   IntColumn get habitId => integer().nullable()();
   TextColumn get title => text()();
   TextColumn get description => text()();
-  TextColumn get icon => text()();
+  TextColumn get icon => text().nullable()();
   TextColumn get positiveTags => text().nullable()();
   TextColumn get negativeTags => text().nullable()();
   RealColumn get duration => real().nullable()();

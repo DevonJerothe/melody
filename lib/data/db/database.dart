@@ -17,7 +17,7 @@ LazyDatabase _openConnection() => LazyDatabase(() async {
     });
 
 @DriftDatabase(
-    tables: [User, Mood, Habit], daos: [UserDao], include: {'sql.drift'})
+    tables: [User, Mood, Habit], daos: [UserDao, MoodDao], include: {'sql.drift'})
 class MelodyDB extends _$MelodyDB {
   MelodyDB() : super(_openConnection());
 

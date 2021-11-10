@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:melody/ui/screens/moods/moods_home.dart';
+import '../moods/moods_home.dart';
 
 class BottomNavMain extends StatelessWidget {
   BottomNavMain({Key? key}) : super(key: key);

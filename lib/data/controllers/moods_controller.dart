@@ -1,5 +1,7 @@
+import 'package:drift/drift.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart' as getx;
+import 'package:melody/data/controllers/auth_controller.dart';
 import '../db/database.dart';
 
 class MoodsController extends getx.GetxController {
@@ -7,41 +9,36 @@ class MoodsController extends getx.GetxController {
 
   MelodyDB db = getx.Get.find();
 
-  Map<DateTime, List<Moods>> moodTimeLineItems = <DateTime, List<Moods>>{};
-
-  List<Moods> moods = [];
-  List<Widget> moodTimeLine = [];
+  final moods = getx.Rx<List<Moods>>([]);
 
   final currentDate = getx.Rx<DateTime>(DateTime.now());
   ScrollController scrollController = ScrollController();
 
   @override
   Future<void> onInit() async {
-    getMoods();
+    getMoods(currentDate.value);
     super.onInit();
   }
 
-  // Map<DateTime, List> getMoodsByDay(DateTime day) {
-  //   if (moodTimeLineItems == null) {
-  //     return {};
-  //   }
-  //   return Map.fromEntries(
-  //     moodTimeLineItems.entries.where((entry) {
-  //       if (DateTime(day.year, day.month, day.day) ==
-  //           DateTime(entry.key.year, entry.key.month, entry.key.day)) {
-  //         return true;
-  //       }
-  //       return false;
-  //     }),
-  //   );
-  // }
-
-  Future createMood() async {}
-  Future updateMood(String id) async {}
-
-  Future getMoods() async {}
-  Future getRecentMoods() async {}
-  void buildMoodTimeLine() {
-
+  Future createMood() async {
+    //For now create a mock mood for testing purposes
+    final userID = AuthController.to.currUser.value!.userId;
+    var mockMood = MoodCompanion(
+      userId: Value(userID),
+      title: const Value("Excited"),
+      description: const Value(
+          "Melody is coming along well. I'm excited to see it continue development"),
+      positiveTags: const Value("Happy,Excited,Good,Energetic,Coding,Computer"),
+      dateCreated: Value(currentDate.value)
+    );
+    await db.moodDao.insertMood(mockMood);
+    getMoods(currentDate.value);
   }
+
+  Future updateMood(String id) async {}
+  Future getMoods(DateTime date) async {
+    currentDate.value = date;
+    moods.value = await db.moodDao.getMoods(currentDate.value);
+  }
+  Future getRecentMoods() async {}
 }
