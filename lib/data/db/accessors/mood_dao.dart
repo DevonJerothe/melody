@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
-import 'package:melody/data/db/database.dart';
-import 'package:melody/data/db/tables/tables.dart';
+import '../database.dart';
+import '../tables/tables.dart';
 
 part 'mood_dao.g.dart';
 
@@ -15,12 +15,15 @@ class MoodDao extends DatabaseAccessor<MelodyDB> with _$MoodDaoMixin {
 
   Future<List<Moods>> getMoods(DateTime? date) async {
     date ??= DateTime.now();
-    return (select(mood)
+    List<Moods> test = await (select(mood)
           ..where((m) => m.dateCreated.day.equals(date!.day))
+          ..where((m) => m.dateCreated.month.equals(date!.month))
+          ..where((m) => m.dateCreated.year.equals(date!.year))
           ..orderBy([
             (t) =>
                 OrderingTerm(expression: t.dateCreated, mode: OrderingMode.desc)
           ]))
         .get();
+    return test;
   }
 }

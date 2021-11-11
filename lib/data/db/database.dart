@@ -17,7 +17,9 @@ LazyDatabase _openConnection() => LazyDatabase(() async {
     });
 
 @DriftDatabase(
-    tables: [User, Mood, Habit], daos: [UserDao, MoodDao], include: {'sql.drift'})
+    tables: [User, Mood, Habit],
+    daos: [UserDao, MoodDao],
+    include: {'sql.drift'})
 class MelodyDB extends _$MelodyDB {
   MelodyDB() : super(_openConnection());
 
@@ -27,11 +29,11 @@ class MelodyDB extends _$MelodyDB {
   @override
   MigrationStrategy get migration => MigrationStrategy(
       beforeOpen: (openingDetails) async {
-        // final m = createMigrator();
-        // for (final table in allTables) {
-        //   await m.deleteTable(table.actualTableName);
-        //   await m.createTable(table);
-        // }
+        final m = createMigrator();
+        for (final table in allTables) {
+          await m.deleteTable(table.actualTableName);
+          await m.createTable(table);
+        }
       },
       onCreate: (m) async => m.createAll(),
       onUpgrade: (m, from, to) async {

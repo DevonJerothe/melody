@@ -1,9 +1,10 @@
 import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:melody/ui/screens/moods/components/mood_tile.dart';
 import '../../../data/controllers/moods_controller.dart';
 import '../components/reusables.dart';
-import 'moods_create_new.dart';
+//import 'moods_create_new.dart';
 import '../../../utils/size_config.dart';
 
 class MoodsHome extends GetView<MoodsController> {
@@ -12,24 +13,41 @@ class MoodsHome extends GetView<MoodsController> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-            width: SizeConfig.blockSizeHorizontal! * 100,
-            margin: const EdgeInsets.fromLTRB(10, 45, 10, 0),
-            child: CalendarTimeline(
-              leftMargin: 0,
-              initialDate: controller.currentDate.value,
-              firstDate: DateTime(DateTime.now().year - 1, 1, 1),
-              lastDate: controller.currentDate.value,
-              onDateSelected: (date) => controller.getMoods(date!),
-              dotsColor: Colors.transparent,
-              locale: 'en',
-            )),
+        SafeArea(
+          child: Container(
+              width: SizeConfig.blockSizeHorizontal! * 100,
+              margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: CalendarTimeline(
+                leftMargin: 0,
+                initialDate: DateTime(
+                  DateTime.now().year,
+                  DateTime.now().month,
+                  DateTime.now().day,
+                ),
+                firstDate: DateTime(DateTime.now().year - 1, 1, 1),
+                lastDate: DateTime.now(),
+                onDateSelected: (date) {
+                  controller.getMoods(date!.add(Duration(
+                    hours: DateTime.now().hour,
+                    minutes: DateTime.now().minute,
+                  )));
+                },
+                dotsColor: Colors.transparent,
+                locale: 'en',
+              )),
+        ),
         const Divider(
           thickness: 1,
           indent: 10,
           endIndent: 10,
         ),
+        IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              controller.createMood();
+            }),
         Expanded(child: GetX<MoodsController>(builder: (_) {
           if (controller.moods.value.isEmpty) {
             return Column(
@@ -71,41 +89,7 @@ class MoodsHome extends GetView<MoodsController> {
                   shrinkWrap: true,
                   itemCount: controller.moods.value.length,
                   itemBuilder: (context, index) {
-                    return ContainerCard(
-                      padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
-                      margin: const EdgeInsets.fromLTRB(15, 0, 15, 5),
-                      height: SizeConfig.blockSizeVertical! * 15,
-                      width: SizeConfig.blockSizeHorizontal! * 100,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(controller.moods.value[index].title),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  controller.moods.value[index].description,
-                                  maxLines: 4,
-                                  softWrap: true,
-                                ),
-                              ),
-                              const Expanded(
-                                child: Text(
-                                  'PlaceHolder',
-                                  textAlign: TextAlign.end,
-                                ),
-                              )
-                            ],
-                          ),
-                          Text(controller.moods.value[index].dateCreated
-                              .toString())
-                        ],
-                      ),
-                    );
+                    return MoodTile(mood: controller.moods.value[index]);
                   }),
             ),
           );

@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:drift/drift.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart' as getx;
-import 'package:melody/data/controllers/auth_controller.dart';
+import 'auth_controller.dart';
 import '../db/database.dart';
 
 class MoodsController extends getx.GetxController {
@@ -23,14 +26,24 @@ class MoodsController extends getx.GetxController {
   Future createMood() async {
     //For now create a mock mood for testing purposes
     final userID = AuthController.to.currUser.value!.userId;
-    var mockMood = MoodCompanion(
-      userId: Value(userID),
-      title: const Value("Excited"),
-      description: const Value(
-          "Melody is coming along well. I'm excited to see it continue development"),
-      positiveTags: const Value("Happy,Excited,Good,Energetic,Coding,Computer"),
-      dateCreated: Value(currentDate.value)
+    final dateCreated = DateTime(
+      currentDate.value.year,
+      currentDate.value.month,
+      currentDate.value.day,
+      DateTime.now().hour,
+      DateTime.now().minute,
+      DateTime.now().second,
     );
+    var mockMood = MoodCompanion(
+        userId: Value(userID),
+        title: const Value("Excited"),
+        description: const Value(
+            "Melody is coming along well. I'm excited to see it continue development"),
+        color: Value(
+            Colors.primaries[Random().nextInt(Colors.primaries.length)].value),
+        positiveTags:
+            const Value("Happy,Excited,Good,Energetic,Coding,Computer"),
+        dateCreated: Value(dateCreated));
     await db.moodDao.insertMood(mockMood);
     getMoods(currentDate.value);
   }
@@ -38,7 +51,8 @@ class MoodsController extends getx.GetxController {
   Future updateMood(String id) async {}
   Future getMoods(DateTime date) async {
     currentDate.value = date;
-    moods.value = await db.moodDao.getMoods(currentDate.value);
+    moods.value = await db.moodDao.getMoods(currentDate.value.toUtc());
   }
+
   Future getRecentMoods() async {}
 }

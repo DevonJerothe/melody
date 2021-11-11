@@ -14,7 +14,7 @@ class BottomNavMain extends StatelessWidget {
           body: IndexedStack(
             index: index,
             children: [
-              MoodsHome(),
+              const MoodsHome(),
               Container(),
               Container(),
               Container(),

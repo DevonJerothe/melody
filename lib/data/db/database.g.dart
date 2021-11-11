@@ -364,9 +364,10 @@ class $UserTable extends User with TableInfo<$UserTable, Users> {
 class Moods extends DataClass implements Insertable<Moods> {
   final int moodId;
   final int userId;
-  final int? habitId;
-  final String title;
   final String description;
+  final String title;
+  final int? color;
+  final int? habitId;
   final String? icon;
   final String? positiveTags;
   final String? negativeTags;
@@ -376,9 +377,10 @@ class Moods extends DataClass implements Insertable<Moods> {
   Moods(
       {required this.moodId,
       required this.userId,
-      this.habitId,
-      required this.title,
       required this.description,
+      required this.title,
+      this.color,
+      this.habitId,
       this.icon,
       this.positiveTags,
       this.negativeTags,
@@ -392,12 +394,14 @@ class Moods extends DataClass implements Insertable<Moods> {
           .mapFromDatabaseResponse(data['${effectivePrefix}mood_id'])!,
       userId: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}user_id'])!,
-      habitId: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}habit_id']),
-      title: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}title'])!,
       description: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}description'])!,
+      title: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}title'])!,
+      color: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}color']),
+      habitId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}habit_id']),
       icon: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}icon']),
       positiveTags: const StringType()
@@ -417,11 +421,14 @@ class Moods extends DataClass implements Insertable<Moods> {
     final map = <String, Expression>{};
     map['mood_id'] = Variable<int>(moodId);
     map['user_id'] = Variable<int>(userId);
+    map['description'] = Variable<String>(description);
+    map['title'] = Variable<String>(title);
+    if (!nullToAbsent || color != null) {
+      map['color'] = Variable<int?>(color);
+    }
     if (!nullToAbsent || habitId != null) {
       map['habit_id'] = Variable<int?>(habitId);
     }
-    map['title'] = Variable<String>(title);
-    map['description'] = Variable<String>(description);
     if (!nullToAbsent || icon != null) {
       map['icon'] = Variable<String?>(icon);
     }
@@ -447,11 +454,13 @@ class Moods extends DataClass implements Insertable<Moods> {
     return MoodCompanion(
       moodId: Value(moodId),
       userId: Value(userId),
+      description: Value(description),
+      title: Value(title),
+      color:
+          color == null && nullToAbsent ? const Value.absent() : Value(color),
       habitId: habitId == null && nullToAbsent
           ? const Value.absent()
           : Value(habitId),
-      title: Value(title),
-      description: Value(description),
       icon: icon == null && nullToAbsent ? const Value.absent() : Value(icon),
       positiveTags: positiveTags == null && nullToAbsent
           ? const Value.absent()
@@ -477,9 +486,10 @@ class Moods extends DataClass implements Insertable<Moods> {
     return Moods(
       moodId: serializer.fromJson<int>(json['moodId']),
       userId: serializer.fromJson<int>(json['userId']),
-      habitId: serializer.fromJson<int?>(json['habitId']),
-      title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String>(json['description']),
+      title: serializer.fromJson<String>(json['title']),
+      color: serializer.fromJson<int?>(json['color']),
+      habitId: serializer.fromJson<int?>(json['habitId']),
       icon: serializer.fromJson<String?>(json['icon']),
       positiveTags: serializer.fromJson<String?>(json['positiveTags']),
       negativeTags: serializer.fromJson<String?>(json['negativeTags']),
@@ -494,9 +504,10 @@ class Moods extends DataClass implements Insertable<Moods> {
     return <String, dynamic>{
       'moodId': serializer.toJson<int>(moodId),
       'userId': serializer.toJson<int>(userId),
-      'habitId': serializer.toJson<int?>(habitId),
-      'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String>(description),
+      'title': serializer.toJson<String>(title),
+      'color': serializer.toJson<int?>(color),
+      'habitId': serializer.toJson<int?>(habitId),
       'icon': serializer.toJson<String?>(icon),
       'positiveTags': serializer.toJson<String?>(positiveTags),
       'negativeTags': serializer.toJson<String?>(negativeTags),
@@ -509,9 +520,10 @@ class Moods extends DataClass implements Insertable<Moods> {
   Moods copyWith(
           {int? moodId,
           int? userId,
-          int? habitId,
-          String? title,
           String? description,
+          String? title,
+          int? color,
+          int? habitId,
           String? icon,
           String? positiveTags,
           String? negativeTags,
@@ -521,9 +533,10 @@ class Moods extends DataClass implements Insertable<Moods> {
       Moods(
         moodId: moodId ?? this.moodId,
         userId: userId ?? this.userId,
-        habitId: habitId ?? this.habitId,
-        title: title ?? this.title,
         description: description ?? this.description,
+        title: title ?? this.title,
+        color: color ?? this.color,
+        habitId: habitId ?? this.habitId,
         icon: icon ?? this.icon,
         positiveTags: positiveTags ?? this.positiveTags,
         negativeTags: negativeTags ?? this.negativeTags,
@@ -536,9 +549,10 @@ class Moods extends DataClass implements Insertable<Moods> {
     return (StringBuffer('Moods(')
           ..write('moodId: $moodId, ')
           ..write('userId: $userId, ')
-          ..write('habitId: $habitId, ')
-          ..write('title: $title, ')
           ..write('description: $description, ')
+          ..write('title: $title, ')
+          ..write('color: $color, ')
+          ..write('habitId: $habitId, ')
           ..write('icon: $icon, ')
           ..write('positiveTags: $positiveTags, ')
           ..write('negativeTags: $negativeTags, ')
@@ -550,17 +564,29 @@ class Moods extends DataClass implements Insertable<Moods> {
   }
 
   @override
-  int get hashCode => Object.hash(moodId, userId, habitId, title, description,
-      icon, positiveTags, negativeTags, duration, dateCreated, dateChanged);
+  int get hashCode => Object.hash(
+      moodId,
+      userId,
+      description,
+      title,
+      color,
+      habitId,
+      icon,
+      positiveTags,
+      negativeTags,
+      duration,
+      dateCreated,
+      dateChanged);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Moods &&
           other.moodId == this.moodId &&
           other.userId == this.userId &&
-          other.habitId == this.habitId &&
-          other.title == this.title &&
           other.description == this.description &&
+          other.title == this.title &&
+          other.color == this.color &&
+          other.habitId == this.habitId &&
           other.icon == this.icon &&
           other.positiveTags == this.positiveTags &&
           other.negativeTags == this.negativeTags &&
@@ -572,9 +598,10 @@ class Moods extends DataClass implements Insertable<Moods> {
 class MoodCompanion extends UpdateCompanion<Moods> {
   final Value<int> moodId;
   final Value<int> userId;
-  final Value<int?> habitId;
-  final Value<String> title;
   final Value<String> description;
+  final Value<String> title;
+  final Value<int?> color;
+  final Value<int?> habitId;
   final Value<String?> icon;
   final Value<String?> positiveTags;
   final Value<String?> negativeTags;
@@ -584,9 +611,10 @@ class MoodCompanion extends UpdateCompanion<Moods> {
   const MoodCompanion({
     this.moodId = const Value.absent(),
     this.userId = const Value.absent(),
-    this.habitId = const Value.absent(),
-    this.title = const Value.absent(),
     this.description = const Value.absent(),
+    this.title = const Value.absent(),
+    this.color = const Value.absent(),
+    this.habitId = const Value.absent(),
     this.icon = const Value.absent(),
     this.positiveTags = const Value.absent(),
     this.negativeTags = const Value.absent(),
@@ -597,9 +625,10 @@ class MoodCompanion extends UpdateCompanion<Moods> {
   MoodCompanion.insert({
     this.moodId = const Value.absent(),
     required int userId,
-    this.habitId = const Value.absent(),
-    required String title,
     required String description,
+    required String title,
+    this.color = const Value.absent(),
+    this.habitId = const Value.absent(),
     this.icon = const Value.absent(),
     this.positiveTags = const Value.absent(),
     this.negativeTags = const Value.absent(),
@@ -607,14 +636,15 @@ class MoodCompanion extends UpdateCompanion<Moods> {
     this.dateCreated = const Value.absent(),
     this.dateChanged = const Value.absent(),
   })  : userId = Value(userId),
-        title = Value(title),
-        description = Value(description);
+        description = Value(description),
+        title = Value(title);
   static Insertable<Moods> custom({
     Expression<int>? moodId,
     Expression<int>? userId,
-    Expression<int?>? habitId,
-    Expression<String>? title,
     Expression<String>? description,
+    Expression<String>? title,
+    Expression<int?>? color,
+    Expression<int?>? habitId,
     Expression<String?>? icon,
     Expression<String?>? positiveTags,
     Expression<String?>? negativeTags,
@@ -625,9 +655,10 @@ class MoodCompanion extends UpdateCompanion<Moods> {
     return RawValuesInsertable({
       if (moodId != null) 'mood_id': moodId,
       if (userId != null) 'user_id': userId,
-      if (habitId != null) 'habit_id': habitId,
-      if (title != null) 'title': title,
       if (description != null) 'description': description,
+      if (title != null) 'title': title,
+      if (color != null) 'color': color,
+      if (habitId != null) 'habit_id': habitId,
       if (icon != null) 'icon': icon,
       if (positiveTags != null) 'positive_tags': positiveTags,
       if (negativeTags != null) 'negative_tags': negativeTags,
@@ -640,9 +671,10 @@ class MoodCompanion extends UpdateCompanion<Moods> {
   MoodCompanion copyWith(
       {Value<int>? moodId,
       Value<int>? userId,
-      Value<int?>? habitId,
-      Value<String>? title,
       Value<String>? description,
+      Value<String>? title,
+      Value<int?>? color,
+      Value<int?>? habitId,
       Value<String?>? icon,
       Value<String?>? positiveTags,
       Value<String?>? negativeTags,
@@ -652,9 +684,10 @@ class MoodCompanion extends UpdateCompanion<Moods> {
     return MoodCompanion(
       moodId: moodId ?? this.moodId,
       userId: userId ?? this.userId,
-      habitId: habitId ?? this.habitId,
-      title: title ?? this.title,
       description: description ?? this.description,
+      title: title ?? this.title,
+      color: color ?? this.color,
+      habitId: habitId ?? this.habitId,
       icon: icon ?? this.icon,
       positiveTags: positiveTags ?? this.positiveTags,
       negativeTags: negativeTags ?? this.negativeTags,
@@ -673,14 +706,17 @@ class MoodCompanion extends UpdateCompanion<Moods> {
     if (userId.present) {
       map['user_id'] = Variable<int>(userId.value);
     }
-    if (habitId.present) {
-      map['habit_id'] = Variable<int?>(habitId.value);
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
     }
-    if (description.present) {
-      map['description'] = Variable<String>(description.value);
+    if (color.present) {
+      map['color'] = Variable<int?>(color.value);
+    }
+    if (habitId.present) {
+      map['habit_id'] = Variable<int?>(habitId.value);
     }
     if (icon.present) {
       map['icon'] = Variable<String?>(icon.value);
@@ -708,9 +744,10 @@ class MoodCompanion extends UpdateCompanion<Moods> {
     return (StringBuffer('MoodCompanion(')
           ..write('moodId: $moodId, ')
           ..write('userId: $userId, ')
-          ..write('habitId: $habitId, ')
-          ..write('title: $title, ')
           ..write('description: $description, ')
+          ..write('title: $title, ')
+          ..write('color: $color, ')
+          ..write('habitId: $habitId, ')
           ..write('icon: $icon, ')
           ..write('positiveTags: $positiveTags, ')
           ..write('negativeTags: $negativeTags, ')
@@ -736,19 +773,23 @@ class $MoodTable extends Mood with TableInfo<$MoodTable, Moods> {
   late final GeneratedColumn<int?> userId = GeneratedColumn<int?>(
       'user_id', aliasedName, false,
       typeName: 'INTEGER', requiredDuringInsert: true);
-  final VerificationMeta _habitIdMeta = const VerificationMeta('habitId');
-  late final GeneratedColumn<int?> habitId = GeneratedColumn<int?>(
-      'habit_id', aliasedName, true,
-      typeName: 'INTEGER', requiredDuringInsert: false);
-  final VerificationMeta _titleMeta = const VerificationMeta('title');
-  late final GeneratedColumn<String?> title = GeneratedColumn<String?>(
-      'title', aliasedName, false,
-      typeName: 'TEXT', requiredDuringInsert: true);
   final VerificationMeta _descriptionMeta =
       const VerificationMeta('description');
   late final GeneratedColumn<String?> description = GeneratedColumn<String?>(
       'description', aliasedName, false,
       typeName: 'TEXT', requiredDuringInsert: true);
+  final VerificationMeta _titleMeta = const VerificationMeta('title');
+  late final GeneratedColumn<String?> title = GeneratedColumn<String?>(
+      'title', aliasedName, false,
+      typeName: 'TEXT', requiredDuringInsert: true);
+  final VerificationMeta _colorMeta = const VerificationMeta('color');
+  late final GeneratedColumn<int?> color = GeneratedColumn<int?>(
+      'color', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _habitIdMeta = const VerificationMeta('habitId');
+  late final GeneratedColumn<int?> habitId = GeneratedColumn<int?>(
+      'habit_id', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
   final VerificationMeta _iconMeta = const VerificationMeta('icon');
   late final GeneratedColumn<String?> icon = GeneratedColumn<String?>(
       'icon', aliasedName, true,
@@ -781,9 +822,10 @@ class $MoodTable extends Mood with TableInfo<$MoodTable, Moods> {
   List<GeneratedColumn> get $columns => [
         moodId,
         userId,
-        habitId,
-        title,
         description,
+        title,
+        color,
+        habitId,
         icon,
         positiveTags,
         negativeTags,
@@ -810,16 +852,6 @@ class $MoodTable extends Mood with TableInfo<$MoodTable, Moods> {
     } else if (isInserting) {
       context.missing(_userIdMeta);
     }
-    if (data.containsKey('habit_id')) {
-      context.handle(_habitIdMeta,
-          habitId.isAcceptableOrUnknown(data['habit_id']!, _habitIdMeta));
-    }
-    if (data.containsKey('title')) {
-      context.handle(
-          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
-    } else if (isInserting) {
-      context.missing(_titleMeta);
-    }
     if (data.containsKey('description')) {
       context.handle(
           _descriptionMeta,
@@ -827,6 +859,20 @@ class $MoodTable extends Mood with TableInfo<$MoodTable, Moods> {
               data['description']!, _descriptionMeta));
     } else if (isInserting) {
       context.missing(_descriptionMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('color')) {
+      context.handle(
+          _colorMeta, color.isAcceptableOrUnknown(data['color']!, _colorMeta));
+    }
+    if (data.containsKey('habit_id')) {
+      context.handle(_habitIdMeta,
+          habitId.isAcceptableOrUnknown(data['habit_id']!, _habitIdMeta));
     }
     if (data.containsKey('icon')) {
       context.handle(
