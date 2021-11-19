@@ -13,11 +13,11 @@ part 'database.g.dart';
 LazyDatabase _openConnection() => LazyDatabase(() async {
       final dbFolder = await getApplicationDocumentsDirectory();
       final file = File(p.join(dbFolder.path, 'db.sqlite'));
-      return NativeDatabase(file);
+      return NativeDatabase(file, logStatements: true);
     });
 
 @DriftDatabase(
-    tables: [User, Mood, Habit],
+    tables: [Users, Moods, Habits, Tags],
     daos: [UserDao, MoodDao],
     include: {'sql.drift'})
 class MelodyDB extends _$MelodyDB {

@@ -1,11 +1,15 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_dao.dart';
+part of daos;
 
 // **************************************************************************
 // DaoGenerator
 // **************************************************************************
 
 mixin _$UserDaoMixin on DatabaseAccessor<MelodyDB> {
-  $UserTable get user => attachedDatabase.user;
+  $UsersTable get users => attachedDatabase.users;
+}
+mixin _$MoodDaoMixin on DatabaseAccessor<MelodyDB> {
+  $MoodsTable get moods => attachedDatabase.moods;
+  $TagsTable get tags => attachedDatabase.tags;
 }

@@ -12,7 +12,7 @@ class AuthController extends getx.GetxController {
 
   final settings = AppSettings();
   final userInitialized = getx.Rx<bool>(false);
-  final currUser = getx.Rxn<Users>();
+  final currUser = getx.Rxn<User>();
 
   @override
   Future<void> onInit() async {
@@ -33,7 +33,7 @@ class AuthController extends getx.GetxController {
   Future createUser() async {
     String tempUser = getRandom(8);
     String tempPass = getRandom(10);
-    var newUser = UserCompanion(
+    var newUser = UsersCompanion(
         username: Value(tempUser),
         password: Value(tempPass),
         name: Value(tempUser),

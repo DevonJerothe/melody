@@ -1,49 +1,101 @@
 import 'package:flutter/material.dart';
-import '../../../../data/db/database.dart';
-import '../../components/reusables.dart';
+import '../../../../data/models/models.dart';
 import '../../../../utils/formatters.dart';
 import '../../../../utils/size_config.dart';
 
 class MoodTile extends StatelessWidget {
-  const MoodTile({required this.mood, Key? key}) : super(key: key);
+  const MoodTile({required this.mood, this.top = false, Key? key})
+      : super(key: key);
 
-  final Moods mood;
+  final MoodItem mood;
+  final bool top;
 
   @override
   Widget build(BuildContext context) {
-    return ContainerCard(
-      padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-      margin: const EdgeInsets.fromLTRB(15, 0, 15, 5),
-      height: SizeConfig.blockSizeVertical! * 15,
-      width: SizeConfig.blockSizeHorizontal! * 100,
-      color: Color(mood.color!),
-      child: Column(
+    final endDate = (top)
+        ? ((mood.dateEnded == null) ? DateTime.now() : mood.dateEnded)
+        : mood.dateEnded;
+
+    return IntrinsicHeight(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(mood.title),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Expanded(
-                flex: 2,
-                child: Text(
-                  mood.description,
-                  maxLines: 4,
-                  softWrap: true,
-                ),
-              ),
-              const Expanded(
-                child: Text(
-                  'PlaceHolder',
-                  textAlign: TextAlign.end,
-                ),
-              )
+              Text(formatDate(endDate, format: 'hh:mm')),
+              Text(formatDate(mood.dateCreated, format: 'hh:mm'))
             ],
           ),
-          Text(
-              formatDate(mood.dateCreated, format: 'MMM dd -', addSymbol: true))
+          const VerticalDivider(
+            thickness: 2,
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Color(mood.color).withOpacity(0.25),
+                    border: Border(
+                      left: BorderSide(
+                          color: Color(mood.color).withOpacity(1), width: 6),
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            mood.title,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Row(
+                            children: const [
+                              Icon(
+                                Icons.timer,
+                                size: 12,
+                              ),
+                              Text(
+                                '15 Min',
+                                style: TextStyle(fontSize: 12),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              mood.description,
+                              maxLines: 4,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: SizeConfig.blockSizeHorizontal! * 15,
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

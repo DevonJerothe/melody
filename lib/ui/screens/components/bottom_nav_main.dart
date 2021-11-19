@@ -7,23 +7,22 @@ class BottomNavMain extends StatelessWidget {
   BottomNavMain({Key? key}) : super(key: key);
   final currentDate = DateTime.now();
 
+  final screens = [
+    MoodsHome(),
+    Container(),
+    Container(),
+    Container(),
+    Container(),
+  ];
+
   @override
   Widget build(BuildContext context) => ValueBuilder<int?>(
         initialValue: 0,
         builder: (index, update) => Scaffold(
-          body: IndexedStack(
-            index: index,
-            children: [
-              const MoodsHome(),
-              Container(),
-              Container(),
-              Container(),
-              Container(),
-            ],
-          ),
+          body: screens[index!],
           bottomNavigationBar: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
-            currentIndex: index!,
+            currentIndex: index,
             onTap: (val) => update(val),
             items: const [
               BottomNavigationBarItem(

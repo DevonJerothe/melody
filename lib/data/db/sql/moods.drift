@@ -1,0 +1,46 @@
+import '../tables/mood.dart';
+import '../tables/tags.dart';
+
+getMoodsWhere:
+SELECT *
+FROM moods
+WHERE $clause;
+
+moodsGetPositiveTags(:moodID AS INT):
+SELECT 
+    t.tag_id,
+    t.user_id,
+    t.title,
+    t.is_negative
+FROM tags t
+INNER JOIN moods m 
+ON 
+    m.mood_id = :moodID 
+WHERE
+    t.tag_id IN (m.positive_tags_ids)
+AND t.user_id = m.user_id;
+
+moodsGetNegativeTags(:moodID AS INT):
+SELECT 
+    t.tag_id,
+    t.user_id,
+    t.title,
+    t.is_negative
+FROM tags t
+INNER JOIN moods m 
+ON 
+    m.mood_id = :moodID 
+WHERE
+    t.tag_id IN (m.negative_tags_ids)
+AND t.user_id = m.user_id;
+
+moodUpdateCountsAdd(:moodName AS TEXT):
+UPDATE moods 
+SET mood_count = mood_count + 1 
+WHERE title = :moodName;
+
+moodUpdateCountsSub(:moodName AS TEXT):
+UPDATE moods 
+SET mood_count = mood_count - 1 
+WHERE title = :moodName;
+

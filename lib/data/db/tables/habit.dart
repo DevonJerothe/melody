@@ -1,7 +1,6 @@
 import 'package:drift/drift.dart';
 
-@DataClassName('Habits')
-class Habit extends Table {
+class Habits extends Table {
   IntColumn get habitId => integer().autoIncrement()();
   IntColumn get userId => integer()();
   TextColumn get habitName => text()();

@@ -1,7 +1,6 @@
 import 'package:drift/drift.dart';
 
-@DataClassName('Users')
-class User extends Table {
+class Users extends Table {
   IntColumn get userId => integer().autoIncrement()();
   TextColumn get username => text()();
   TextColumn get password => text()();
