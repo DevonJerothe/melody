@@ -73,6 +73,7 @@ class MoodTile extends StatelessWidget {
                           ),
                         ],
                       ),
+                      const SizedBox(height: 10),
                       Row(
                         children: [
                           Expanded(
@@ -89,6 +90,34 @@ class MoodTile extends StatelessWidget {
                             width: SizeConfig.blockSizeHorizontal! * 15,
                           )
                         ],
+                      ),
+                      const SizedBox(height: 10),
+                      if (mood.positiveTags!.isNotEmpty) ...[
+                        SizedBox(
+                          height: 25,
+                          child: CustomScrollView(
+                            scrollDirection: Axis.horizontal,
+                            slivers: buildTagTiles(),
+                            semanticChildCount: 4,
+                          ),
+                        )
+                      ],
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            height: 25,
+                            //width: 25,
+                            child: MoodIcon(level: mood.level),
+                          ),
+                          InkWell(
+                            //TODO: add more functionality (Edit/Delete/Quick End)
+                            onTap: () {},
+                            child: const SizedBox(
+                                width: 35,
+                                child: Icon(Icons.more_horiz_rounded)),
+                          )
+                        ],
                       )
                     ],
                   ),
@@ -99,5 +128,111 @@ class MoodTile extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  List<SliverList> buildTagTiles({bool negative = false}) {
+    List<SliverList> list = [];
+    if (negative) {
+      list.add(SliverList(
+          delegate: SliverChildBuilderDelegate(
+              (context, index) => TagTile(tag: mood.negativeTags![index]),
+              childCount: mood.negativeTags!.length)));
+    } else {
+      list.add(SliverList(
+          delegate: SliverChildBuilderDelegate(
+              (context, index) => TagTile(tag: mood.positiveTags![index]),
+              childCount: mood.positiveTags!.length)));
+    }
+    return list;
+  }
+}
+
+class TagTile extends StatelessWidget {
+  const TagTile({
+    Key? key,
+    required this.tag,
+  }) : super(key: key);
+
+  final TagItem tag;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      height: 24,
+      color: Colors.blueAccent,
+      child: Text(tag.title),
+    );
+  }
+}
+
+class MoodIcon extends StatelessWidget {
+  const MoodIcon({required this.level, Key? key}) : super(key: key);
+
+  final int level;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: getMoodRow());
+  }
+
+  List<Widget> getMoodRow() {
+    List<Widget> row = [];
+
+    Image img = Image.asset('assests/png/emojis/04.png', width: 23);
+    Text text = const Text('Good');
+
+    switch (level) {
+      case 1:
+        {
+          img = Image.asset('assets/png/emojis/01.png', width: 23);
+          text = const Text('Awefull');
+        }
+        break;
+      case 2:
+        {
+          img = Image.asset('assets/png/emojis/02.png', width: 23);
+          text = const Text('Bad');
+        }
+        break;
+      case 3:
+        {
+          img = Image.asset('assets/png/emojis/03.png', width: 23);
+          text = const Text('Not Good');
+        }
+        break;
+      case 4:
+        {
+          img = Image.asset('assets/png/emojis/04.png', width: 23);
+          text = const Text('Fine');
+        }
+        break;
+      case 5:
+        {
+          img = Image.asset('assets/png/emojis/05.png', width: 23);
+          text = const Text('Good');
+        }
+        break;
+      case 6:
+        {
+          img = Image.asset('assets/png/emojis/06.png', width: 23);
+          text = const Text('Great');
+        }
+        break;
+      case 7:
+        {
+          img = Image.asset('assets/png/emojis/07.png', width: 23);
+          text = const Text('Amazing');
+        }
+        break;
+      default:
+    }
+    row
+      ..add(img)
+      ..add(const SizedBox(width: 8))
+      ..add(text);
+    return row;
   }
 }

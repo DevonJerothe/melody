@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:melody/ui/screens/moods/components/mood_add_new_button.dart';
 import '../../../utils/formatters.dart';
 import '../components/calendar_timeline.dart';
 import 'components/mood_tile.dart';
 import '../../../data/controllers/moods_controller.dart';
 import '../components/reusables.dart';
+
 //import 'moods_create_new.dart';
 import '../../../utils/size_config.dart';
 
 class MoodsHome extends StatelessWidget {
-  MoodsHome({Key? key}) : super(key: key);
-
-  MoodsController controller = Get.put(MoodsController());
+  const MoodsHome({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class MoodsHome extends StatelessWidget {
                   child: CalendarTimelineView(
                     initialDate: DateTime.now(),
                     daysBack: 90,
-                    onSelected: (date) => controller.getMoods(date),
+                    onSelected: (date) => MoodsController.to.getMoods(date),
                   ),
                 ),
                 const Divider(
@@ -61,59 +61,33 @@ class MoodsHome extends StatelessWidget {
                   indent: 10,
                   endIndent: 10,
                 ),
-                Expanded(child: GetX<MoodsController>(builder: (_) {
-                  if (controller.moods.value.isEmpty) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                            'Looks like nothings here!\nTry tracking a new Mood'),
-                        const SizedBox(
-                          height: 25,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            controller.createMock();
-                            //Get.to(const CreateMood());
-                          },
-                          child: ContainerCard(
-                            width: SizeConfig.blockSizeHorizontal! * 50,
-                            height: SizeConfig.blockSizeVertical! * 5,
-                            color: Colors.blue.shade400,
-                            radius: 8,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Text('Add Mood',
-                                    //textAlign: TextAlign.center,
-                                    style: TextStyle(color: Colors.white))
-                              ],
+                Expanded(
+                  child: GetX<MoodsController>(
+                    init: MoodsController(),
+                    builder: (controller) {
+                      if (controller.moods.value.isEmpty) {
+                        return Container();
+                      }
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(15, 10, 0, 10),
+                            child: Text(
+                              formatDate(controller.currentDate.value,
+                                  format: 'd MMM'),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
-                        )
-                      ],
-                    );
-                  }
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 10, 0, 10),
-                        child: Text(
-                          formatDate(controller.currentDate.value,
-                              format: 'd MMM'),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Scrollbar(
-                          child: MediaQuery.removePadding(
-                            context: Get.context!,
-                            removeTop: true,
-                            child: ListView.builder(
+                          Expanded(
+                            child: MediaQuery.removePadding(
+                              context: Get.context!,
+                              removeTop: true,
+                              child: ListView.builder(
+                                controller: controller.scrollController,
                                 shrinkWrap: true,
                                 itemCount: controller.moods.value.length,
                                 itemBuilder: (context, index) {
@@ -129,17 +103,56 @@ class MoodsHome extends StatelessWidget {
                                         mood: controller.moods.value[index],
                                         top: index == 0),
                                   );
-                                }),
+                                },
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ],
-                  );
-                })),
+                        ],
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ),
-        )
+        ),
+        GetX<MoodsController>(
+            init: MoodsController(),
+            builder: (controller) {
+              return AnimatedPositioned(
+                left: controller.moods.value.isEmpty
+                    ? SizeConfig.blockSizeHorizontal! * 25
+                    : SizeConfig.blockSizeHorizontal! * 2,
+                top: controller.moods.value.isEmpty
+                    ? SizeConfig.blockSizeVertical! * 50
+                    : SizeConfig.blockSizeVertical! * 84.5,
+                duration: const Duration(milliseconds: 100),
+                child: AnimatedCrossFade(
+                  duration: const Duration(milliseconds: 300),
+                  crossFadeState: controller.showButton.value
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                  layoutBuilder:
+                      (topChild, topChildKey, bottomChild, bottomChildKey) {
+                    return Stack(
+                      clipBehavior: Clip.none, alignment: Alignment.center,
+                      children: [
+                        Positioned(
+                            key: bottomChildKey, top: 0, child: bottomChild),
+                        Positioned(key: topChildKey, child: topChild)
+                      ],
+                    );
+                  },
+                  firstChild: const Center(
+                    child: AddNewMoodBtn(),
+                  ),
+                  secondChild: SizedBox(
+                    height: 50,
+                    width: SizeConfig.blockSizeHorizontal! * 95,
+                  ),
+                ),
+              );
+            }),
       ],
     );
   }

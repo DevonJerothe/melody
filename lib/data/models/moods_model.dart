@@ -12,6 +12,7 @@ class MoodItem with _$MoodItem {
       required String title,
       required DateTime dateCreated,
       required int color,
+      required int level,
       int? moodCount,
       String? icon,
       double? duration,
@@ -29,22 +30,21 @@ class MoodItem with _$MoodItem {
   //   return db.moodDao.getMood(id);
   // }
 
-  void getTags(bool positive, {bool negative = false}) async {
+  Future<List<TagItem>> getTags({bool negative = false}) async {
     MelodyDB db = Get.find();
-    List<TagItem>? pTags = positiveTags;
-    List<TagItem>? nTags = negativeTags;
-    if (positive) {
-      pTags = await db
-          .moodsGetPositiveTags(moodId)
-          .map((t) => TagItem.fromJson(t.toJson()))
-          .get();
-    }
+    List<TagItem> pTags = positiveTags ?? [];
+    List<TagItem> nTags = negativeTags ?? [];
     if (negative) {
       nTags = await db
           .moodsGetNegativeTags(moodId)
           .map((t) => TagItem.fromJson(t.toJson()))
           .get();
+      return nTags;
     }
-    copyWith(positiveTags: pTags, negativeTags: nTags);
+    pTags = await db
+        .moodsGetPositiveTags(moodId)
+        .map((t) => TagItem.fromJson(t.toJson()))
+        .get();
+    return pTags;
   }
 }

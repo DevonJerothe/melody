@@ -20,6 +20,7 @@ class MoodDao extends DatabaseAccessor<MelodyDB> with _$MoodDaoMixin {
           userId: m.userId,
           description: m.description,
           title: m.title,
+          level: m.level,
           dateCreated: m.dateCreated,
           color: m.color!,
           moodCount: m.moodCount,
@@ -28,16 +29,18 @@ class MoodDao extends DatabaseAccessor<MelodyDB> with _$MoodDaoMixin {
           dateChanged: m.dateChanged,
           dateEnded: m.dateEnded);
     }).get());
-
+    List<MoodItem> moodsList = [];
     for (var mood in results) {
-      mood.getTags(true);
+      var pTags = await mood.getTags();
+      var nTags = await mood.getTags(negative: true);
+      moodsList.add(mood.copyWith(positiveTags: pTags, negativeTags: nTags));
     }
-
-    return results;
+    print(moodsList.length);
+    return moodsList;
   }
 
   Future<int?> insertMood(MoodsCompanion newMood) async {
-    int? prevID = await getRecentMoodID(newMood.dateCreated.value);
+    int? prevID = await getRecentMoodID(newMood.dateCreated.value.toUtc());
     if (prevID != null) {
       await (update(moods)..where((m) => m.moodId.equals(prevID)))
           .write(MoodsCompanion(dateEnded: Value(DateTime.now().toUtc())));
@@ -55,7 +58,8 @@ class MoodDao extends DatabaseAccessor<MelodyDB> with _$MoodDaoMixin {
           ..orderBy([
             (t) =>
                 OrderingTerm(expression: t.dateCreated, mode: OrderingMode.desc)
-          ]))
+          ])
+          ..limit(1))
         .map((m) => m.moodId)
         .getSingleOrNull();
     return lastMood;

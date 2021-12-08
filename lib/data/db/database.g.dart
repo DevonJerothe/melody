@@ -255,6 +255,7 @@ class Mood extends DataClass implements Insertable<Mood> {
   final int userId;
   final String description;
   final String title;
+  final int level;
   final DateTime dateCreated;
   final int? color;
   final String? habitIds;
@@ -270,6 +271,7 @@ class Mood extends DataClass implements Insertable<Mood> {
       required this.userId,
       required this.description,
       required this.title,
+      required this.level,
       required this.dateCreated,
       this.color,
       this.habitIds,
@@ -291,6 +293,8 @@ class Mood extends DataClass implements Insertable<Mood> {
           .mapFromDatabaseResponse(data['${effectivePrefix}description'])!,
       title: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}title'])!,
+      level: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}level'])!,
       dateCreated: const DateTimeType()
           .mapFromDatabaseResponse(data['${effectivePrefix}date_created'])!,
       color: const IntType()
@@ -320,6 +324,7 @@ class Mood extends DataClass implements Insertable<Mood> {
     map['user_id'] = Variable<int>(userId);
     map['description'] = Variable<String>(description);
     map['title'] = Variable<String>(title);
+    map['level'] = Variable<int>(level);
     map['date_created'] = Variable<DateTime>(dateCreated);
     if (!nullToAbsent || color != null) {
       map['color'] = Variable<int?>(color);
@@ -355,6 +360,7 @@ class Mood extends DataClass implements Insertable<Mood> {
       userId: Value(userId),
       description: Value(description),
       title: Value(title),
+      level: Value(level),
       dateCreated: Value(dateCreated),
       color:
           color == null && nullToAbsent ? const Value.absent() : Value(color),
@@ -389,6 +395,7 @@ class Mood extends DataClass implements Insertable<Mood> {
       userId: serializer.fromJson<int>(json['userId']),
       description: serializer.fromJson<String>(json['description']),
       title: serializer.fromJson<String>(json['title']),
+      level: serializer.fromJson<int>(json['level']),
       dateCreated: serializer.fromJson<DateTime>(json['dateCreated']),
       color: serializer.fromJson<int?>(json['color']),
       habitIds: serializer.fromJson<String?>(json['habitIds']),
@@ -409,6 +416,7 @@ class Mood extends DataClass implements Insertable<Mood> {
       'userId': serializer.toJson<int>(userId),
       'description': serializer.toJson<String>(description),
       'title': serializer.toJson<String>(title),
+      'level': serializer.toJson<int>(level),
       'dateCreated': serializer.toJson<DateTime>(dateCreated),
       'color': serializer.toJson<int?>(color),
       'habitIds': serializer.toJson<String?>(habitIds),
@@ -427,6 +435,7 @@ class Mood extends DataClass implements Insertable<Mood> {
           int? userId,
           String? description,
           String? title,
+          int? level,
           DateTime? dateCreated,
           int? color,
           String? habitIds,
@@ -442,6 +451,7 @@ class Mood extends DataClass implements Insertable<Mood> {
         userId: userId ?? this.userId,
         description: description ?? this.description,
         title: title ?? this.title,
+        level: level ?? this.level,
         dateCreated: dateCreated ?? this.dateCreated,
         color: color ?? this.color,
         habitIds: habitIds ?? this.habitIds,
@@ -460,6 +470,7 @@ class Mood extends DataClass implements Insertable<Mood> {
           ..write('userId: $userId, ')
           ..write('description: $description, ')
           ..write('title: $title, ')
+          ..write('level: $level, ')
           ..write('dateCreated: $dateCreated, ')
           ..write('color: $color, ')
           ..write('habitIds: $habitIds, ')
@@ -480,6 +491,7 @@ class Mood extends DataClass implements Insertable<Mood> {
       userId,
       description,
       title,
+      level,
       dateCreated,
       color,
       habitIds,
@@ -498,6 +510,7 @@ class Mood extends DataClass implements Insertable<Mood> {
           other.userId == this.userId &&
           other.description == this.description &&
           other.title == this.title &&
+          other.level == this.level &&
           other.dateCreated == this.dateCreated &&
           other.color == this.color &&
           other.habitIds == this.habitIds &&
@@ -515,6 +528,7 @@ class MoodsCompanion extends UpdateCompanion<Mood> {
   final Value<int> userId;
   final Value<String> description;
   final Value<String> title;
+  final Value<int> level;
   final Value<DateTime> dateCreated;
   final Value<int?> color;
   final Value<String?> habitIds;
@@ -530,6 +544,7 @@ class MoodsCompanion extends UpdateCompanion<Mood> {
     this.userId = const Value.absent(),
     this.description = const Value.absent(),
     this.title = const Value.absent(),
+    this.level = const Value.absent(),
     this.dateCreated = const Value.absent(),
     this.color = const Value.absent(),
     this.habitIds = const Value.absent(),
@@ -546,6 +561,7 @@ class MoodsCompanion extends UpdateCompanion<Mood> {
     required int userId,
     required String description,
     required String title,
+    this.level = const Value.absent(),
     required DateTime dateCreated,
     this.color = const Value.absent(),
     this.habitIds = const Value.absent(),
@@ -565,6 +581,7 @@ class MoodsCompanion extends UpdateCompanion<Mood> {
     Expression<int>? userId,
     Expression<String>? description,
     Expression<String>? title,
+    Expression<int>? level,
     Expression<DateTime>? dateCreated,
     Expression<int?>? color,
     Expression<String?>? habitIds,
@@ -581,6 +598,7 @@ class MoodsCompanion extends UpdateCompanion<Mood> {
       if (userId != null) 'user_id': userId,
       if (description != null) 'description': description,
       if (title != null) 'title': title,
+      if (level != null) 'level': level,
       if (dateCreated != null) 'date_created': dateCreated,
       if (color != null) 'color': color,
       if (habitIds != null) 'habit_ids': habitIds,
@@ -599,6 +617,7 @@ class MoodsCompanion extends UpdateCompanion<Mood> {
       Value<int>? userId,
       Value<String>? description,
       Value<String>? title,
+      Value<int>? level,
       Value<DateTime>? dateCreated,
       Value<int?>? color,
       Value<String?>? habitIds,
@@ -614,6 +633,7 @@ class MoodsCompanion extends UpdateCompanion<Mood> {
       userId: userId ?? this.userId,
       description: description ?? this.description,
       title: title ?? this.title,
+      level: level ?? this.level,
       dateCreated: dateCreated ?? this.dateCreated,
       color: color ?? this.color,
       habitIds: habitIds ?? this.habitIds,
@@ -641,6 +661,9 @@ class MoodsCompanion extends UpdateCompanion<Mood> {
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
+    }
+    if (level.present) {
+      map['level'] = Variable<int>(level.value);
     }
     if (dateCreated.present) {
       map['date_created'] = Variable<DateTime>(dateCreated.value);
@@ -682,6 +705,7 @@ class MoodsCompanion extends UpdateCompanion<Mood> {
           ..write('userId: $userId, ')
           ..write('description: $description, ')
           ..write('title: $title, ')
+          ..write('level: $level, ')
           ..write('dateCreated: $dateCreated, ')
           ..write('color: $color, ')
           ..write('habitIds: $habitIds, ')
@@ -720,6 +744,12 @@ class $MoodsTable extends Moods with TableInfo<$MoodsTable, Mood> {
   late final GeneratedColumn<String?> title = GeneratedColumn<String?>(
       'title', aliasedName, false,
       typeName: 'TEXT', requiredDuringInsert: true);
+  final VerificationMeta _levelMeta = const VerificationMeta('level');
+  late final GeneratedColumn<int?> level = GeneratedColumn<int?>(
+      'level', aliasedName, false,
+      typeName: 'INTEGER',
+      requiredDuringInsert: false,
+      defaultValue: const Constant(5));
   final VerificationMeta _dateCreatedMeta =
       const VerificationMeta('dateCreated');
   late final GeneratedColumn<DateTime?> dateCreated =
@@ -772,6 +802,7 @@ class $MoodsTable extends Moods with TableInfo<$MoodsTable, Mood> {
         userId,
         description,
         title,
+        level,
         dateCreated,
         color,
         habitIds,
@@ -815,6 +846,10 @@ class $MoodsTable extends Moods with TableInfo<$MoodsTable, Mood> {
           _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
     } else if (isInserting) {
       context.missing(_titleMeta);
+    }
+    if (data.containsKey('level')) {
+      context.handle(
+          _levelMeta, level.isAcceptableOrUnknown(data['level']!, _levelMeta));
     }
     if (data.containsKey('date_created')) {
       context.handle(

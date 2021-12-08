@@ -28,6 +28,7 @@ class _$MoodItemTearOff {
       required String title,
       required DateTime dateCreated,
       required int color,
+      required int level,
       int? moodCount,
       String? icon,
       double? duration,
@@ -43,6 +44,7 @@ class _$MoodItemTearOff {
       title: title,
       dateCreated: dateCreated,
       color: color,
+      level: level,
       moodCount: moodCount,
       icon: icon,
       duration: duration,
@@ -70,6 +72,7 @@ mixin _$MoodItem {
   String get title => throw _privateConstructorUsedError;
   DateTime get dateCreated => throw _privateConstructorUsedError;
   int get color => throw _privateConstructorUsedError;
+  int get level => throw _privateConstructorUsedError;
   int? get moodCount => throw _privateConstructorUsedError;
   String? get icon => throw _privateConstructorUsedError;
   double? get duration => throw _privateConstructorUsedError;
@@ -96,6 +99,7 @@ abstract class $MoodItemCopyWith<$Res> {
       String title,
       DateTime dateCreated,
       int color,
+      int level,
       int? moodCount,
       String? icon,
       double? duration,
@@ -122,6 +126,7 @@ class _$MoodItemCopyWithImpl<$Res> implements $MoodItemCopyWith<$Res> {
     Object? title = freezed,
     Object? dateCreated = freezed,
     Object? color = freezed,
+    Object? level = freezed,
     Object? moodCount = freezed,
     Object? icon = freezed,
     Object? duration = freezed,
@@ -155,6 +160,10 @@ class _$MoodItemCopyWithImpl<$Res> implements $MoodItemCopyWith<$Res> {
       color: color == freezed
           ? _value.color
           : color // ignore: cast_nullable_to_non_nullable
+              as int,
+      level: level == freezed
+          ? _value.level
+          : level // ignore: cast_nullable_to_non_nullable
               as int,
       moodCount: moodCount == freezed
           ? _value.moodCount
@@ -204,6 +213,7 @@ abstract class _$MoodItemCopyWith<$Res> implements $MoodItemCopyWith<$Res> {
       String title,
       DateTime dateCreated,
       int color,
+      int level,
       int? moodCount,
       String? icon,
       double? duration,
@@ -231,6 +241,7 @@ class __$MoodItemCopyWithImpl<$Res> extends _$MoodItemCopyWithImpl<$Res>
     Object? title = freezed,
     Object? dateCreated = freezed,
     Object? color = freezed,
+    Object? level = freezed,
     Object? moodCount = freezed,
     Object? icon = freezed,
     Object? duration = freezed,
@@ -264,6 +275,10 @@ class __$MoodItemCopyWithImpl<$Res> extends _$MoodItemCopyWithImpl<$Res>
       color: color == freezed
           ? _value.color
           : color // ignore: cast_nullable_to_non_nullable
+              as int,
+      level: level == freezed
+          ? _value.level
+          : level // ignore: cast_nullable_to_non_nullable
               as int,
       moodCount: moodCount == freezed
           ? _value.moodCount
@@ -312,6 +327,7 @@ class _$_MoodItem extends _MoodItem {
       required this.title,
       required this.dateCreated,
       required this.color,
+      required this.level,
       this.moodCount,
       this.icon,
       this.duration,
@@ -338,6 +354,8 @@ class _$_MoodItem extends _MoodItem {
   @override
   final int color;
   @override
+  final int level;
+  @override
   final int? moodCount;
   @override
   final String? icon;
@@ -356,7 +374,7 @@ class _$_MoodItem extends _MoodItem {
 
   @override
   String toString() {
-    return 'MoodItem(moodId: $moodId, userId: $userId, description: $description, title: $title, dateCreated: $dateCreated, color: $color, moodCount: $moodCount, icon: $icon, duration: $duration, habitIds: $habitIds, positiveTags: $positiveTags, negativeTags: $negativeTags, dateEnded: $dateEnded, dateChanged: $dateChanged)';
+    return 'MoodItem(moodId: $moodId, userId: $userId, description: $description, title: $title, dateCreated: $dateCreated, color: $color, level: $level, moodCount: $moodCount, icon: $icon, duration: $duration, habitIds: $habitIds, positiveTags: $positiveTags, negativeTags: $negativeTags, dateEnded: $dateEnded, dateChanged: $dateChanged)';
   }
 
   @override
@@ -372,6 +390,7 @@ class _$_MoodItem extends _MoodItem {
             (identical(other.dateCreated, dateCreated) ||
                 other.dateCreated == dateCreated) &&
             (identical(other.color, color) || other.color == color) &&
+            (identical(other.level, level) || other.level == level) &&
             (identical(other.moodCount, moodCount) ||
                 other.moodCount == moodCount) &&
             (identical(other.icon, icon) || other.icon == icon) &&
@@ -397,6 +416,7 @@ class _$_MoodItem extends _MoodItem {
       title,
       dateCreated,
       color,
+      level,
       moodCount,
       icon,
       duration,
@@ -425,6 +445,7 @@ abstract class _MoodItem extends MoodItem {
       required String title,
       required DateTime dateCreated,
       required int color,
+      required int level,
       int? moodCount,
       String? icon,
       double? duration,
@@ -449,6 +470,8 @@ abstract class _MoodItem extends MoodItem {
   DateTime get dateCreated;
   @override
   int get color;
+  @override
+  int get level;
   @override
   int? get moodCount;
   @override

@@ -14,15 +14,35 @@ class MoodsController extends getx.GetxController {
   MelodyDB db = getx.Get.find();
 
   final moods = getx.Rx<List<MoodItem>>([]);
-
+  final showButton = getx.Rx<bool>(true);
   final currentDate = getx.Rx<DateTime>(DateTime.now());
+
   ScrollController scrollController = ScrollController();
+  AnimationController? animationController;
+
+  double currentPosition = 0.0;
 
   @override
   Future<void> onInit() async {
     getMoods(currentDate.value);
+    scrollController.addListener(_onScroll);
     super.onInit();
   }
+
+  void _onScroll() {
+    final maxScroll = scrollController.position.maxScrollExtent;
+    final currentScroll = scrollController.position.pixels;
+    if(currentScroll > 0 && (currentScroll < currentPosition)){
+      showButton.value = true;
+    }
+    if (currentScroll < maxScroll && (currentScroll > currentPosition + 5)) {
+      showButton.value = false;
+    }
+    if(currentScroll <= maxScroll){
+      currentPosition = currentScroll;
+    }
+  }
+
 
   Future createMock() async {
     //For now create a mock mood for testing purposes
@@ -49,18 +69,6 @@ class MoodsController extends getx.GetxController {
       title: const Value("Great"),
     ));
 
-    var mockMood1 = MoodsCompanion(
-        userId: Value(userID),
-        title: const Value("Excited"),
-        description: const Value(
-            "Melody is coming along well. I'm excited to see it continue development"),
-        color: Value(Colors.primaries[Random().nextInt(Colors.accents.length)]
-            .withAlpha(100)
-            .value),
-        positiveTagsIds: Value('$tag1, $tag2, $tag3'),
-        dateCreated: Value(dateCreated));
-    await db.moodDao.insertMood(mockMood1);
-
     dateCreated = DateTime(
       currentDate.value.year,
       currentDate.value.month,
@@ -80,26 +88,6 @@ class MoodsController extends getx.GetxController {
         dateCreated: Value(dateCreated));
     await db.moodDao.insertMood(mockMood2);
 
-    // dateCreated = DateTime(
-    //   currentDate.value.year,
-    //   currentDate.value.month,
-    //   currentDate.value.day,
-    //   DateTime.now().hour,
-    //   DateTime.now().minute,
-    //   DateTime.now().second,
-    // );
-    // var mockMood3 = MoodsCompanion(
-    //     userId: Value(userID),
-    //     title: const Value("Excited"),
-    //     description: const Value(
-    //         "I am loving my new Mac. While I did spend a lot of money, it has made me want to develope more apps!"),
-    //     color: Value(Colors.primaries[Random().nextInt(Colors.accents.length)]
-    //         .withAlpha(100)
-    //         .value),
-    //     positiveTagsIds: Value('$tag1, $tag2'),
-    //     dateCreated: Value(dateCreated));
-    // db.moodDao.insertMood(mockMood3);
-
     getMoods(currentDate.value);
   }
 
@@ -108,6 +96,7 @@ class MoodsController extends getx.GetxController {
   Future updateMood(String id) async {}
 
   Future getMoods(DateTime date) async {
+    showButton.value = true;
     currentDate.value = date;
     moods.value = await db.moodDao.getMoods(currentDate.value.toUtc());
   }

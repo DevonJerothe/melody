@@ -5,6 +5,7 @@ class Moods extends Table {
   IntColumn get userId => integer()();
   TextColumn get description => text()();
   TextColumn get title => text()();
+  IntColumn get level => integer().withDefault(const Constant(5))();
   DateTimeColumn get dateCreated => dateTime()();
   IntColumn get color => integer().nullable()();
   TextColumn get habitIds => text().nullable()();

@@ -5,8 +5,8 @@ import 'package:melody/ui/theme/theme.dart';
 
 class ContainerCard extends StatelessWidget {
   const ContainerCard(
-      {required this.width,
-      required this.height,
+      {this.height,
+      this.width,
       this.color,
       this.child,
       this.decoration,
@@ -16,8 +16,8 @@ class ContainerCard extends StatelessWidget {
       this.margin,
       this.padding});
 
-  final double width;
-  final double height;
+  final double? width;
+  final double? height;
   final EdgeInsetsGeometry? margin;
   final EdgeInsetsGeometry? padding;
   final Widget? child;
