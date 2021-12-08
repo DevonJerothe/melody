@@ -116,43 +116,7 @@ class MoodsHome extends StatelessWidget {
             ),
           ),
         ),
-        GetX<MoodsController>(
-            init: MoodsController(),
-            builder: (controller) {
-              return AnimatedPositioned(
-                left: controller.moods.value.isEmpty
-                    ? SizeConfig.blockSizeHorizontal! * 25
-                    : SizeConfig.blockSizeHorizontal! * 2,
-                top: controller.moods.value.isEmpty
-                    ? SizeConfig.blockSizeVertical! * 50
-                    : SizeConfig.blockSizeVertical! * 84.5,
-                duration: const Duration(milliseconds: 100),
-                child: AnimatedCrossFade(
-                  duration: const Duration(milliseconds: 300),
-                  crossFadeState: controller.showButton.value
-                      ? CrossFadeState.showFirst
-                      : CrossFadeState.showSecond,
-                  layoutBuilder:
-                      (topChild, topChildKey, bottomChild, bottomChildKey) {
-                    return Stack(
-                      clipBehavior: Clip.none, alignment: Alignment.center,
-                      children: [
-                        Positioned(
-                            key: bottomChildKey, top: 0, child: bottomChild),
-                        Positioned(key: topChildKey, child: topChild)
-                      ],
-                    );
-                  },
-                  firstChild: const Center(
-                    child: AddNewMoodBtn(),
-                  ),
-                  secondChild: SizedBox(
-                    height: 50,
-                    width: SizeConfig.blockSizeHorizontal! * 95,
-                  ),
-                ),
-              );
-            }),
+        const AddNewMoodBtn()
       ],
     );
   }
